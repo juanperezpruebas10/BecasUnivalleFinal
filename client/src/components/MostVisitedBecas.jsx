@@ -37,7 +37,8 @@ const MostVisitedBecas = ({ becas: becasProp }) => {
         visitas: beca.visitas || 0,
         crecimiento: calcularCrecimiento(beca.visitas, index),
         pais: beca.pais,
-        tipo: beca.tipo
+        tipo: beca.tipo,
+        link_oficial: beca.link_oficial
       }));
       setBecas(formattedBecas);
     } catch (error) {
