@@ -18,6 +18,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import authService from '../services/authService';
 import becaService from '../services/becaService';
+import { OPPORTUNITY_TYPES, getOpportunityType } from '../config/opportunityTypes';
 
 const Reportes = () => {
   const navigate = useNavigate();
@@ -61,27 +62,11 @@ const Reportes = () => {
   };
 
   const getTipoColor = (tipo) => {
-    const colors = {
-      beca: 'bg-blue-100 text-blue-600',
-      curso: 'bg-green-100 text-green-600',
-      pasantia: 'bg-purple-100 text-purple-600',
-      intercambio: 'bg-cyan-100 text-cyan-600',
-      webinar: 'bg-orange-100 text-orange-600',
-      concurso: 'bg-yellow-100 text-yellow-600'
-    };
-    return colors[tipo] || 'bg-gray-100 text-gray-600';
+    return getOpportunityType(tipo).badge;
   };
 
   const getTipoLabel = (tipo) => {
-    const labels = {
-      beca: 'Beca',
-      curso: 'Curso',
-      pasantia: 'Pasantía',
-      intercambio: 'Intercambio',
-      webinar: 'Webinar',
-      concurso: 'Concurso'
-    };
-    return labels[tipo] || tipo;
+    return getOpportunityType(tipo).label;
   };
 
   const canEdit = () => {
@@ -92,6 +77,50 @@ const Reportes = () => {
   // Función para cargar imagen como base64
   const loadImageAsBase64 = (url) => {
     return new Promise((resolve) => {
+      const timer = setTimeout(() => resolve(null), 4000);
+      const img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.onload = () => {
+        clearTimeout(timer);
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          // Fondo blanco para que los PNG con transparencia no salgan negros
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0);
+          resolve(canvas.toDataURL('image/jpeg', 0.8));
+        } catch {
+          resolve(null);
+        }
+      };
+      img.onerror = () => { clearTimeout(timer); resolve(null); };
+      img.src = url;
+    });
+  };
+
+  const generatePDF = async (mes, anio) => {
+    setReportLoading(true);
+    try {
+
+    const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+    const becasFiltradas = becas.filter(beca => {
+      if (!beca.created_at) return false;
+      const fecha = new Date(beca.created_at);
+      return (fecha.getUTCMonth() + 1 === mes && fecha.getUTCFullYear() === anio);
+    });
+
+    const doc = new jsPDF();
+
+    // Encabezado
+    doc.setFillColor(150, 114, 146);
+    doc.rect(0, 0, 210, 45, 'F');
+
+    // CARGAR LOGO UNIVALLE con fondo del encabezado para evitar fondo negro
+    const logoUnivalle = await new Promise((resolve) => {
       const img = new Image();
       img.crossOrigin = 'Anonymous';
       img.onload = () => {
@@ -99,44 +128,24 @@ const Reportes = () => {
         canvas.width = img.width;
         canvas.height = img.height;
         const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#967292';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, 0, 0);
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.5);
-        resolve(dataUrl);
+        resolve(canvas.toDataURL('image/jpeg', 0.9));
       };
       img.onerror = () => resolve(null);
-      img.src = url;
+      img.src = '/logo-univalle.png';
     });
-  };
-
-  const generatePDF = async (mes, anio) => {
-    setReportLoading(true);
-
-    const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-
-    const becasFiltradas = becas.filter(beca => {
-      if (!beca.created_at) return false;
-      const fecha = new Date(beca.created_at);
-      return (fecha.getMonth() + 1 === mes && fecha.getFullYear() === anio);
-    });
-
-    const doc = new jsPDF();
-
-    // CARGAR LOGO UNIVALLE
-    const logoUnivalle = await loadImageAsBase64('/logo-univalle.png');
-
-    // Encabezado
-    doc.setFillColor(139, 13, 50);
-    doc.rect(0, 0, 210, 45, 'F');
 
     // INSERTAR LOGO
     if (logoUnivalle) {
-      doc.addImage(logoUnivalle, 'JPEG', 15, 10, 25, 25);
+      doc.addImage(logoUnivalle, 'JPEG', 15, 8, 27, 27);
     }
 
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(20);
     doc.setFont('helvetica', 'bold');
-    doc.text('UNIVERSIDAD DEL VALLE', 105, 22, { align: 'center' });
+    doc.text('UNIVERSIDAD PRIVADA DEL VALLE', 105, 22, { align: 'center' });
 
     doc.setFontSize(11);
     doc.text('Sistema de Becas - Reporte', 105, 35, { align: 'center' });
@@ -155,7 +164,7 @@ const Reportes = () => {
       becasFiltradas.map(async (beca) => {
         let imgBase64 = null;
         if (beca.logo) {
-          imgBase64 = await loadImageAsBase64(`http://localhost:5000${beca.logo}`);
+          imgBase64 = await loadImageAsBase64(beca.logo);
         }
         return { ...beca, logoBase64: imgBase64 };
       })
@@ -168,7 +177,6 @@ const Reportes = () => {
       beca.institucion,
       beca.pais,
       beca.area || '—',
-      beca.creador_nombre || beca.creado_por || '—'
     ]));
 
     // Array para guardar las posiciones de los logos para los enlaces
@@ -177,11 +185,11 @@ const Reportes = () => {
     if (tableData.length > 0) {
       doc.autoTable({
         startY: 95,
-        head: [['Logo', 'Título', 'Tipo', 'Institución', 'País', 'Área', 'Creado por']],
+        head: [['Logo', 'Título', 'Tipo', 'Institución', 'País', 'Área']],
         body: tableData,
         theme: 'grid',
         headStyles: {
-          fillColor: [139, 13, 50],
+          fillColor: [150, 114, 146],
           textColor: [255, 255, 255],
           fontStyle: 'bold',
           halign: 'center'
@@ -197,38 +205,36 @@ const Reportes = () => {
           cellPadding: 3
         },
         didDrawCell: (data) => {
-          if (data.column.index === 0 && data.cell.section === 'body') {
-            const beca = becasConImagenes[data.row.index];
+          if (data.cell.section !== 'body') return;
+          const beca = becasConImagenes[data.row.index];
+          if (!beca) return;
+
+          if (data.column.index === 0) {
+            // Dibujar logo centrado
             if (beca.logoBase64) {
+              const size = Math.min(data.cell.width - 4, data.cell.height - 4, 12);
               doc.addImage(
-                beca.logoBase64,
-                'JPEG',
-                data.cell.x + 2,
-                data.cell.y + 2,
-                10,
-                10
+                beca.logoBase64, 'JPEG',
+                data.cell.x + (data.cell.width - size) / 2,
+                data.cell.y + (data.cell.height - size) / 2,
+                size, size
               );
             }
-            // Guardar la posición de la celda del logo para agregar enlace después
-            logoPositions.push({
-              beca,
-              x: data.cell.x,
-              y: data.cell.y,
-              w: data.cell.width,
-              h: data.cell.height
-            });
+            // Link clicable sobre toda la celda del logo
+            if (beca.link_oficial) {
+              doc.link(
+                data.cell.x,
+                data.cell.y,
+                data.cell.width,
+                data.cell.height,
+                { url: beca.link_oficial }
+              );
+            }
           }
         },
         columnStyles: {
-          0: { cellWidth: 15 }
-        }
-      });
-      
-      // AGREGAR ENLACES CLICKEABLES A LOS LOGOS DESPUÉS DE DIBUJAR LA TABLA
-      logoPositions.forEach(position => {
-        const { beca, x, y, w, h } = position;
-        if (beca.link_oficial && beca.link_oficial !== '') {
-          doc.link(x, y, w, h, { url: beca.link_oficial });
+          0: { cellWidth: 16 },
+          1: { cellWidth: 55 }
         }
       });
       
@@ -242,12 +248,17 @@ const Reportes = () => {
       doc.setPage(i);
       doc.setFontSize(8);
       doc.setTextColor(150, 150, 150);
-      doc.text(`Universidad del Valle - Página ${i} de ${pageCount}`, 105, doc.internal.pageSize.height - 10, { align: 'center' });
+      doc.text(`Universidad Privada del Valle - Página ${i} de ${pageCount}`, 105, doc.internal.pageSize.height - 10, { align: 'center' });
     }
     
     doc.save(`reporte_becas_${meses[mes - 1]}_${anio}.pdf`);
-    setReportLoading(false);
     setShowReportModal(false);
+    } catch (error) {
+      console.error('Error generando PDF:', error);
+      alert('Ocurrió un error al generar el reporte. Intenta de nuevo.');
+    } finally {
+      setReportLoading(false);
+    }
   };
 
   // Filtrar becas
@@ -263,7 +274,7 @@ const Reportes = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredBecas.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredBecas.length / itemsPerPage);
-  const tipos = ['beca', 'curso', 'pasantia', 'intercambio', 'webinar', 'concurso'];
+  const tipos = OPPORTUNITY_TYPES.map((tipo) => tipo.value);
 
   const handleEdit = (beca) => {
     navigate(`/dashboard/editar-beca/${beca.id}`);
@@ -298,7 +309,7 @@ const Reportes = () => {
           className="bg-white rounded-3xl p-8 max-w-md w-full mx-4"
         >
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-black text-[#8B0D32]">Generar Reporte</h2>
+            <h2 className="text-2xl font-black text-[#967292]">Generar Reporte</h2>
             <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
               <X className="w-5 h-5 text-gray-400" />
             </button>
@@ -306,19 +317,19 @@ const Reportes = () => {
           <p className="text-gray-500 text-sm mb-6">Seleccione el período para generar el reporte</p>
           <div className="space-y-4">
             <div>
-              <label className="block text-[#8B0D32] text-[10px] font-black uppercase mb-2">Mes</label>
+              <label className="block text-[#967292] text-[10px] font-black uppercase mb-2">Mes</label>
               <select value={mes} onChange={(e) => setMes(parseInt(e.target.value))} className="w-full p-3 border border-gray-200 rounded-xl">
                 {mesesLista.map((m, i) => (<option key={i} value={i + 1}>{m}</option>))}
               </select>
             </div>
             <div>
-              <label className="block text-[#8B0D32] text-[10px] font-black uppercase mb-2">Año</label>
+              <label className="block text-[#967292] text-[10px] font-black uppercase mb-2">Año</label>
               <input type="number" value={anio} onChange={(e) => setAnio(parseInt(e.target.value))} className="w-full p-3 border border-gray-200 rounded-xl" min="2000" max="2030" />
             </div>
           </div>
           <div className="flex gap-3 mt-8">
             <button onClick={onClose} className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-500 font-bold text-xs">Cancelar</button>
-            <button onClick={() => onGenerate(mes, anio)} disabled={loading} className="flex-1 bg-gradient-to-r from-[#8B0D32] to-[#a30046] text-white py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2">
+            <button onClick={() => onGenerate(mes, anio)} disabled={loading} className="flex-1 bg-gradient-to-r from-[#967292] to-[#9C7A98] text-white py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2">
               {loading ? (
                 <>
                   <Loader className="w-4 h-4 animate-spin" />
@@ -339,25 +350,25 @@ const Reportes = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center pt-28">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#8B0D32]"></div>
+      <div className="min-h-screen flex items-center justify-center pt-8">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#967292]"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#fff5f5] to-white pt-28 pb-10 px-4">
+    <div className="min-h-screen page-surface pt-8 pb-10 px-4">
       <div className="max-w-7xl mx-auto">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
           <div className="flex justify-between items-center flex-wrap gap-4">
             <div>
-              <h1 className="text-4xl font-black italic text-[#8B0D32] mb-2">Reportes de Becas</h1>
+              <h1 className="text-4xl font-black italic text-[#967292] mb-2">Reportes de Becas</h1>
               <p className="text-gray-500 text-sm">
                 {user?.rol === 'auxiliar' ? 'Visualiza y gestiona las becas que has creado' : 'Visualiza y gestiona todas las becas registradas en el sistema'}
               </p>
               {user && <p className="text-xs text-gray-400 mt-1">Rol: <span className="capitalize font-bold">{user.rol}</span>{user?.rol === 'auxiliar' && ' (Solo tus becas)'}</p>}
             </div>
-            <button onClick={() => setShowReportModal(true)} className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-wider shadow-lg hover:shadow-xl transition-all flex items-center gap-2">
+            <button onClick={() => setShowReportModal(true)} className="bg-gradient-to-r from-[#A2839F] to-[#AF93AC] text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-wider shadow-lg hover:shadow-xl transition-all flex items-center gap-2">
               <FileText className="w-4 h-4" /> Generar Reporte
             </button>
           </div>
@@ -367,7 +378,7 @@ const Reportes = () => {
           <div className="mb-6 flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input type="text" placeholder="Buscar por título, institución o país..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:border-[#8B0D32] outline-none" />
+              <input type="text" placeholder="Buscar por título, institución o país..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:border-[#967292] outline-none" />
             </div>
             <select value={filterTipo} onChange={(e) => setFilterTipo(e.target.value)} className="px-4 py-3 border border-gray-200 rounded-xl">
               <option value="">Todos los tipos</option>
@@ -395,7 +406,7 @@ const Reportes = () => {
                     <td className="py-3 px-4">
                       {beca.logo ? (
                         <img 
-                          src={`http://localhost:5000${beca.logo}`} 
+                          src={beca.logo}
                           alt="logo" 
                           className="w-8 h-8 rounded-lg object-cover"
                           onError={(e) => { e.target.style.display = 'none'; }}
@@ -415,7 +426,7 @@ const Reportes = () => {
                     {canEdit() && (
                       <td className="py-3 px-4">
                         <div className="flex items-center justify-center gap-2">
-                          <button onClick={() => handleEdit(beca)} className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg"><Edit className="w-4 h-4" /></button>
+                          <button onClick={() => handleEdit(beca)} className="p-2 text-[#967292] hover:bg-[#F4F4F4] rounded-lg"><Edit className="w-4 h-4" /></button>
                           <button onClick={() => handleDelete(beca)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg"><Trash2 className="w-4 h-4" /></button>
                         </div>
                       </td>

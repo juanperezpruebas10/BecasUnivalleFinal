@@ -67,7 +67,7 @@ export const getUnivalleLogo = async () => {
 export const getBecaLogo = async (logoPath) => {
   if (!logoPath) return null;
   try {
-    const response = await fetch(`http://localhost:5000${logoPath}`);
+    const response = await fetch(logoPath);
     if (!response.ok) return null;
     const blob = await response.blob();
     const base64 = await new Promise((resolve) => {

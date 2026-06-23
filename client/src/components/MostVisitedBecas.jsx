@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import becaService from '../services/becaService';
 import authService from '../services/authService';
+import { getOpportunityType } from '../config/opportunityTypes';
 
 const MostVisitedBecas = ({ becas: becasProp }) => {
   const [becas, setBecas] = useState([]);
@@ -36,9 +37,7 @@ const MostVisitedBecas = ({ becas: becasProp }) => {
         visitas: beca.visitas || 0,
         crecimiento: calcularCrecimiento(beca.visitas, index),
         pais: beca.pais,
-        nivel: beca.tipo === 'beca' ? 'Pregrado' : 
-               beca.tipo === 'curso' ? 'Postgrado' :
-               beca.tipo === 'pasantia' ? 'Doctorado' : 'Maestría'
+        tipo: beca.tipo
       }));
       setBecas(formattedBecas);
     } catch (error) {
@@ -57,31 +56,13 @@ const MostVisitedBecas = ({ becas: becasProp }) => {
   };
 
   const maxVisitas = Math.max(...becas.map(b => b.visitas), 1);
-
-  const getIconByNivel = (nivel) => {
-    const icons = {
-      'Pregrado': '🎓',
-      'Postgrado': '📚',
-      'Maestría': '👨‍🎓',
-      'Doctorado': '🔬'
-    };
-    return icons[nivel] || '📖';
-  };
-
-  const getColorByNivel = (nivel) => {
-    const colors = {
-      'Pregrado': 'from-blue-500 to-blue-600',
-      'Postgrado': 'from-purple-500 to-purple-600',
-      'Maestría': 'from-green-500 to-green-600',
-      'Doctorado': 'from-orange-500 to-orange-600'
-    };
-    return colors[nivel] || 'from-gray-500 to-gray-600';
-  };
+  const getIconByTipo = (tipo) => getOpportunityType(tipo).emoji;
+  const getColorByTipo = (tipo) => getOpportunityType(tipo).gradient;
 
   if (loading) {
     return (
       <div className="bg-white rounded-3xl p-6 shadow-lg border border-gray-100 h-full flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#8B0D32]"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#967292]"></div>
       </div>
     );
   }
@@ -90,7 +71,7 @@ const MostVisitedBecas = ({ becas: becasProp }) => {
     <div className="bg-white rounded-3xl p-6 shadow-lg border border-gray-100 h-full">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h3 className="text-[#8B0D32] font-black uppercase italic tracking-widest text-[11px] mb-1">
+          <h3 className="text-[#967292] font-black uppercase italic tracking-widest text-[11px] mb-1">
             🔥 Becas más visitadas
           </h3>
           <p className="text-gray-400 text-[10px]">
@@ -121,9 +102,9 @@ const MostVisitedBecas = ({ becas: becasProp }) => {
               >
                 <div className="flex items-center gap-3 mb-1">
                   <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-sm ${
-                    index === 0 ? 'bg-yellow-400 text-yellow-900' :
+                    index === 0 ? 'bg-[#FACC15] text-[#454545]' :
                     index === 1 ? 'bg-gray-300 text-gray-700' :
-                    index === 2 ? 'bg-orange-300 text-orange-900' :
+                    index === 2 ? 'bg-[#FDBA74] text-[#454545]' :
                     'bg-gray-100 text-gray-500'
                   }`}>
                     #{index + 1}
@@ -131,8 +112,8 @@ const MostVisitedBecas = ({ becas: becasProp }) => {
                   
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-lg">{getIconByNivel(beca.nivel)}</span>
-                      <h4 className="font-black text-sm text-gray-800 group-hover:text-[#8B0D32] transition-colors line-clamp-1">
+                      <span className="text-lg">{getIconByTipo(beca.tipo)}</span>
+                      <h4 className="font-black text-sm text-gray-800 group-hover:text-[#967292] transition-colors line-clamp-1">
                         {beca.nombre}
                       </h4>
                     </div>
@@ -161,7 +142,7 @@ const MostVisitedBecas = ({ becas: becasProp }) => {
                       initial={{ width: 0 }}
                       animate={{ width: `${porcentaje}%` }}
                       transition={{ delay: index * 0.1, duration: 0.8 }}
-                      className={`h-full rounded-full bg-gradient-to-r ${getColorByNivel(beca.nivel)}`}
+                      className={`h-full rounded-full bg-gradient-to-r ${getColorByTipo(beca.tipo)}`}
                     />
                   </div>
                 </div>

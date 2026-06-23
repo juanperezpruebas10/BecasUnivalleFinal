@@ -22,6 +22,7 @@ import {
   Save
 } from 'lucide-react';
 import becaService from '../services/becaService';
+import { getOpportunityOptions } from '../config/opportunityTypes';
 
 // Lista de países (la misma que en RegistroBeca)
 const paisesLista = [
@@ -50,7 +51,7 @@ const InputField = ({
 
   return (
     <div className="flex flex-col">
-      <label className="text-[#8B0D32] text-[10px] font-black uppercase mb-2 ml-1 tracking-[0.2em]">
+      <label className="text-[#967292] text-[10px] font-black uppercase mb-2 ml-1 tracking-[0.2em]">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <div className="relative">
@@ -64,14 +65,14 @@ const InputField = ({
           <textarea
             name={name} value={value} onChange={handleChange} onBlur={handleBlur}
             placeholder={placeholder} rows={rows}
-            className={`w-full p-4 bg-[#fffcfc] border-2 rounded-[20px] focus:border-[#8B0D32] outline-none transition-all shadow-sm text-sm resize-none ${
+            className={`w-full p-4 bg-[#F4F4F4] border-2 rounded-[20px] focus:border-[#967292] outline-none transition-all shadow-sm text-sm resize-none ${
               isTouched && error ? 'border-red-300 bg-red-50' : 'border-gray-100'
             }`}
           />
         ) : options ? (
           <select
             name={name} value={value} onChange={handleChange} onBlur={handleBlur}
-            className={`w-full p-4 bg-[#fffcfc] border-2 rounded-[20px] focus:border-[#8B0D32] outline-none transition-all shadow-sm text-sm appearance-none ${
+            className={`w-full p-4 bg-[#F4F4F4] border-2 rounded-[20px] focus:border-[#967292] outline-none transition-all shadow-sm text-sm appearance-none ${
               isTouched && error ? 'border-red-300 bg-red-50' : 'border-gray-100'
             }`}
           >
@@ -82,7 +83,7 @@ const InputField = ({
           <input
             type={type} name={name} value={value} onChange={handleChange} onBlur={handleBlur}
             placeholder={placeholder}
-            className={`w-full p-4 ${Icon ? 'pl-12' : 'pl-4'} pr-12 bg-[#fffcfc] border-2 rounded-[20px] focus:border-[#8B0D32] outline-none transition-all shadow-sm text-sm ${
+            className={`w-full p-4 ${Icon ? 'pl-12' : 'pl-4'} pr-12 bg-[#F4F4F4] border-2 rounded-[20px] focus:border-[#967292] outline-none transition-all shadow-sm text-sm ${
               isTouched && error ? 'border-red-300 bg-red-50' : 'border-gray-100'
             }`}
           />
@@ -127,7 +128,7 @@ const LogoUpload = ({ logoPreview, logoFile, onFileChange, onRemove, errors }) =
 
   return (
     <div className="flex flex-col">
-      <label className="text-[#8B0D32] text-[10px] font-black uppercase mb-2 tracking-widest">
+      <label className="text-[#967292] text-[10px] font-black uppercase mb-2 tracking-widest">
         LOGO DE LA INSTITUCIÓN
       </label>
       <div 
@@ -135,7 +136,7 @@ const LogoUpload = ({ logoPreview, logoFile, onFileChange, onRemove, errors }) =
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className={`border-2 border-dashed rounded-[30px] p-8 transition-all cursor-pointer text-center ${dragActive ? 'border-[#8B0D32] bg-red-50' : 'border-gray-200'}`}
+        className={`border-2 border-dashed rounded-[30px] p-8 transition-all cursor-pointer text-center ${dragActive ? 'border-[#967292] bg-red-50' : 'border-gray-200'}`}
       >
         <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={(e) => handleFileChange(e.target.files[0])} />
         {logoPreview ? (
@@ -165,23 +166,13 @@ const EditarBeca = () => {
   
   const [formData, setFormData] = useState({
     tipo: '', titulo: '', institucion: '', pais: '', area: '',
-    descripcion: '', fechaApertura: '', fechaCierre: '', duracion: '',
-    requisitos: '', nivelEstudio: '', idiomaRequerido: '',
-    edadMinima: '', edadMaxima: '', linkOficial: '',
-    logoPreview: null, logoFile: null, plazasDisponibles: '',
+    descripcion: '', linkOficial: '', logoPreview: null, logoFile: null,
   });
 
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
 
-  const tiposOportunidad = [
-    { value: 'beca', label: '🎓 Beca', icon: GraduationCap, color: 'from-blue-500 to-blue-600' },
-    { value: 'curso', label: '📚 Curso', icon: BookOpen, color: 'from-green-500 to-green-600' },
-    { value: 'pasantia', label: '💼 Pasantía', icon: Briefcase, color: 'from-purple-500 to-purple-600' },
-    { value: 'intercambio', label: '🌍 Intercambio', icon: Globe, color: 'from-cyan-500 to-cyan-600' },
-    { value: 'webinar', label: '🎥 Webinar', icon: Video, color: 'from-orange-500 to-orange-600' },
-    { value: 'concurso', label: '🏆 Concurso', icon: Trophy, color: 'from-yellow-500 to-yellow-600' }
-  ];
+  const tiposOportunidad = getOpportunityOptions();
 
   const nivelesEstudio = ['Pregrado', 'Postgrado', 'Maestría', 'Doctorado', 'Técnico', 'Todos'];
   const idiomas = ['Español', 'Inglés', 'Portugués', 'Francés', 'Alemán', 'Chino', 'Italiano', 'No requiere'];
@@ -198,18 +189,9 @@ const EditarBeca = () => {
           pais: beca.pais || '',
           area: beca.area || '',
           descripcion: beca.descripcion || '',
-          fechaApertura: beca.fecha_apertura ? beca.fecha_apertura.split('T')[0] : '',
-          fechaCierre: beca.fecha_cierre ? beca.fecha_cierre.split('T')[0] : '',
-          duracion: beca.duracion || '',
-          requisitos: beca.requisitos || '',
-          nivelEstudio: beca.nivel_estudio || '',
-          idiomaRequerido: beca.idioma_requerido || '',
-          edadMinima: beca.edad_minima || '',
-          edadMaxima: beca.edad_maxima || '',
           linkOficial: beca.link_oficial || '',
-          logoPreview: beca.logo ? `http://localhost:5000${beca.logo}` : null,
+          logoPreview: beca.logo || null,
           logoFile: null,
-          plazasDisponibles: beca.plazas_disponibles || '',
         });
       } catch (err) {
         console.error('Error cargando beca:', err);
@@ -227,9 +209,6 @@ const EditarBeca = () => {
     if (!formData.titulo) newErrors.titulo = 'El título es requerido';
     if (!formData.institucion) newErrors.institucion = 'La institución es requerida';
     if (!formData.pais) newErrors.pais = 'El país es requerido';
-    if (!formData.fechaApertura) newErrors.fechaApertura = 'Fecha requerida';
-    if (!formData.fechaCierre) newErrors.fechaCierre = 'Fecha requerida';
-    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -284,7 +263,7 @@ const EditarBeca = () => {
   if (loadingData) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#8B0D32]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#967292]"></div>
       </div>
     );
   }
@@ -299,7 +278,7 @@ const EditarBeca = () => {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#fff5f5]">
+      <div className="min-h-screen flex items-center justify-center page-surface">
         <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center">
           <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-4" />
           <h2 className="text-2xl font-black text-gray-800 uppercase italic">¡Beca Actualizada!</h2>
@@ -310,26 +289,26 @@ const EditarBeca = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#fff5f5] to-white py-10 px-4">
+    <div className="min-h-screen page-surface py-10 px-4">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-black italic text-[#8B0D32] mb-2 uppercase">Editar Beca</h1>
+          <h1 className="text-4xl font-black italic text-[#967292] mb-2 uppercase">Editar Beca</h1>
           <p className="text-gray-500 text-sm">Modifica los datos de la beca seleccionada</p>
         </div>
 
-        <div className="bg-white rounded-[45px] shadow-[0_30px_80px_rgba(139,13,50,0.1)] overflow-hidden">
+        <div className="bg-white rounded-[45px] shadow-[0_30px_80px_rgba(150,114,146,0.1)] overflow-hidden">
           <form onSubmit={handleSubmit} className="p-10 md:p-14">
             <div className="space-y-6">
               {/* Tipo */}
               <div>
-                <label className="text-[#8B0D32] text-[10px] font-black uppercase mb-4 block tracking-widest">Tipo de Oportunidad *</label>
+                <label className="text-[#967292] text-[10px] font-black uppercase mb-4 block tracking-widest">Tipo de Oportunidad *</label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {tiposOportunidad.map(tipo => (
                     <button key={tipo.value} type="button" 
                       onClick={() => { setFormData(p => ({ ...p, tipo: tipo.value })); setErrors(e => ({ ...e, tipo: '' })); }}
-                      className={`p-4 rounded-2xl border-2 transition-all text-left ${formData.tipo === tipo.value ? `border-[#8B0D32] bg-gradient-to-r ${tipo.color} text-white shadow-lg` : 'border-gray-100 bg-white hover:border-[#8B0D32]'}`}
+                      className={`p-4 rounded-2xl border-2 transition-all text-left ${formData.tipo === tipo.value ? `border-[#967292] bg-gradient-to-r ${tipo.color} text-white shadow-lg` : 'border-gray-100 bg-white hover:border-[#967292]'}`}
                     >
-                      <tipo.icon className={`w-6 h-6 mb-2 ${formData.tipo === tipo.value ? 'text-white' : 'text-[#8B0D32]'}`} />
+                      <tipo.icon className={`w-6 h-6 mb-2 ${formData.tipo === tipo.value ? 'text-white' : 'text-[#967292]'}`} />
                       <p className="font-black text-[10px] uppercase">{tipo.label}</p>
                     </button>
                   ))}
@@ -342,7 +321,7 @@ const EditarBeca = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <InputField label="INSTITUCIÓN" name="institucion" icon={Building2} formData={formData} errors={errors} touched={touched} handleChange={handleChange} handleBlur={handleBlur} />
                 <div className="flex flex-col">
-                  <label className="text-[#8B0D32] text-[10px] font-black uppercase mb-2 ml-1 tracking-[0.2em]">PAÍS *</label>
+                  <label className="text-[#967292] text-[10px] font-black uppercase mb-2 ml-1 tracking-[0.2em]">PAÍS *</label>
                   <Select options={paisesLista} placeholder="Buscar país..." 
                     value={paisesLista.find(p => p.value === formData.pais)}
                     onChange={(opt) => setFormData(p => ({ ...p, pais: opt?.value }))}
@@ -387,8 +366,8 @@ const EditarBeca = () => {
               />
 
               <div className="flex justify-end gap-6 mt-8 pt-6 border-t border-gray-100">
-                <button type="button" onClick={() => navigate('/dashboard/reportes')} className="text-gray-400 font-bold uppercase text-[10px] tracking-widest hover:text-[#8B0D32]">Cancelar</button>
-                <button type="submit" disabled={loading} className="bg-gradient-to-r from-[#8B0D32] to-[#a30046] text-white px-8 py-3 rounded-[25px] font-black uppercase text-[10px] tracking-[0.2em] shadow-lg disabled:opacity-50 flex items-center gap-2">
+                <button type="button" onClick={() => navigate('/dashboard/reportes')} className="text-gray-400 font-bold uppercase text-[10px] tracking-widest hover:text-[#967292]">Cancelar</button>
+                <button type="submit" disabled={loading} className="bg-gradient-to-r from-[#967292] to-[#9C7A98] text-white px-8 py-3 rounded-[25px] font-black uppercase text-[10px] tracking-[0.2em] shadow-lg disabled:opacity-50 flex items-center gap-2">
                   {loading ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <><Save className="w-4 h-4" /> Guardar Cambios</>}
                 </button>
               </div>

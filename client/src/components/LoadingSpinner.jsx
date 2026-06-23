@@ -6,7 +6,7 @@ const LoadingSpinner = () => {
       <motion.div
         animate={{ rotate: 360 }}
         transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-        className="w-16 h-16 border-4 border-[#8B0D32] border-t-transparent rounded-full"
+        className="w-16 h-16 border-4 border-[#967292] border-t-transparent rounded-full"
       />
     </div>
   );

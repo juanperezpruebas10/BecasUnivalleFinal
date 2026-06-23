@@ -56,7 +56,7 @@ const Login = () => {
         initial={{ x: 100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        className="w-full md:w-1/2 bg-[#a30046] flex items-center justify-center p-6 lg:p-16"
+        className="w-full md:w-1/2 bg-[#9C7A98] flex items-center justify-center p-6 lg:p-16"
       >
         <motion.div 
           initial={{ scale: 0.9, opacity: 0 }}
@@ -86,7 +86,7 @@ const Login = () => {
                 whileFocus={{ scale: 1.02 }}
                 type="email" 
                 placeholder="ejemplo@univalle.edu"
-                className="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-rose-200 outline-none transition-all bg-gray-50"
+                className="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[#AF93AC] outline-none transition-all bg-gray-50"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -99,7 +99,7 @@ const Login = () => {
                 whileFocus={{ scale: 1.02 }}
                 type="password" 
                 placeholder="••••••••"
-                className="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-rose-200 outline-none transition-all bg-gray-50"
+                className="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[#AF93AC] outline-none transition-all bg-gray-50"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required

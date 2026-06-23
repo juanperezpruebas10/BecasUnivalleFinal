@@ -11,6 +11,9 @@ import Reportes from './pages/Reportes';
 import Convocatorias from './pages/Convocatorias'; // ← IMPORTAR
 import AnimatedPage from './components/AnimatedPage';
 import EditarBeca from './pages/EditarBeca';
+import PracticasInternacionales from './pages/PracticasInternacionales';
+import PremiosInternacionales from './pages/PremiosInternacionales';
+import ReportesPremios from './pages/ReportesPremios';
 
 function App() {
   const location = useLocation();
@@ -18,7 +21,7 @@ function App() {
   const isLoginPage = location.pathname === '/';
 
   return (
-    <div className={`min-h-screen flex flex-col ${isLoginPage ? 'bg-white' : 'bg-[#fff5f5]'} overflow-x-hidden`}>
+    <div className={`min-h-screen flex flex-col ${isLoginPage ? 'bg-white' : 'bg-[#F4F4F4]'} overflow-x-hidden`}>
       
       {!isLoginPage && (
         <Header 
@@ -32,7 +35,7 @@ function App() {
         <Sidebar isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       )}
       
-      <main className="flex-1">
+      <main className={`flex-1 ${isLoginPage ? '' : 'pt-[70px] md:pl-32'}`}>
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<Login />} />
@@ -56,6 +59,11 @@ function App() {
                 <Reportes />
               </AnimatedPage>
             } />
+            <Route path="/dashboard/reportes-premios" element={
+              <AnimatedPage>
+                <ReportesPremios />
+              </AnimatedPage>
+            } />
             {/* NUEVA RUTA PARA CONVOCATORIAS */}
             <Route path="/dashboard/convocatorias" element={
               <AnimatedPage>
@@ -65,6 +73,16 @@ function App() {
             <Route path="/dashboard/editar-beca/:id" element={
               <AnimatedPage>
                 <EditarBeca />
+              </AnimatedPage>
+            } />
+            <Route path="/dashboard/practicas-internacionales" element={
+              <AnimatedPage>
+                <PracticasInternacionales />
+              </AnimatedPage>
+            } />
+            <Route path="/dashboard/premios-internacionales" element={
+              <AnimatedPage>
+                <PremiosInternacionales />
               </AnimatedPage>
             } />
           </Routes>

@@ -183,9 +183,9 @@
   }
 }
 :root {
-  --accent: #8B0D32;
-  --accent-bg: rgba(139, 13, 50, 0.1);
-  --accent-border: #a30046;
+  --accent: #967292;
+  --accent-bg: rgba(150, 114, 146, 0.1);
+  --accent-border: #9C7A98;
   --text-h: #1a1a1a;
   --border: #e5e7eb;
   --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);

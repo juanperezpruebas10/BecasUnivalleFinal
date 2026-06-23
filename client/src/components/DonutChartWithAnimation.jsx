@@ -13,7 +13,7 @@ const renderActiveShape = (props) => {
       <text x={cx} y={cy + 15} dy={8} textAnchor="middle" fill="#999" className="text-[10px] font-bold uppercase">
         {payload.name}
       </text>
-      <text x={cx} y={cy + 30} dy={8} textAnchor="middle" fill="#8B0D32" className="text-[9px] font-black">
+      <text x={cx} y={cy + 30} dy={8} textAnchor="middle" fill="#967292" className="text-[9px] font-black">
         {`${(percent * 100).toFixed(0)}%`}
       </text>
       <Sector
@@ -53,7 +53,7 @@ const DonutChartWithAnimation = ({ data, colors }) => {
           cy="50%"
           innerRadius={70}
           outerRadius={90}
-          fill="#8884d8"
+          fill="#2563EB"
           dataKey="value"
           onMouseEnter={(_, index) => setActiveIndex(index)}
           animationBegin={0}

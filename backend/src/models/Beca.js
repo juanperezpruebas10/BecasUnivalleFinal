@@ -1,28 +1,33 @@
 const pool = require('../config/database');
 
 class Beca {
+  // Hacer columnas del paso 2 opcionales si existen con NOT NULL
+  static async ensureNullableColumns() {
+    const alterColumns = [
+      "ALTER TABLE becas MODIFY COLUMN fecha_apertura DATE NULL DEFAULT NULL",
+      "ALTER TABLE becas MODIFY COLUMN fecha_cierre DATE NULL DEFAULT NULL",
+      "ALTER TABLE becas MODIFY COLUMN duracion VARCHAR(100) NULL DEFAULT NULL",
+      "ALTER TABLE becas MODIFY COLUMN nivel_estudio VARCHAR(100) NULL DEFAULT NULL",
+      "ALTER TABLE becas MODIFY COLUMN idioma_requerido VARCHAR(100) NULL DEFAULT NULL",
+      "ALTER TABLE becas MODIFY COLUMN edad_minima INT NULL DEFAULT NULL",
+      "ALTER TABLE becas MODIFY COLUMN edad_maxima INT NULL DEFAULT NULL",
+      "ALTER TABLE becas MODIFY COLUMN requisitos TEXT NULL DEFAULT NULL",
+      "ALTER TABLE becas MODIFY COLUMN plazas_disponibles INT NULL DEFAULT NULL",
+    ];
+    for (const sql of alterColumns) {
+      try { await pool.execute(sql); } catch (_) {}
+    }
+  }
+
   // Crear beca
   static async create(becaData, userId) {
-    const {
-      tipo, titulo, institucion, pais, area, descripcion,
-      fechaApertura, fechaCierre, duracion, nivelEstudio,
-      idiomaRequerido, edadMinima, edadMaxima, requisitos,
-      linkOficial, logo, plazasDisponibles
-    } = becaData;
+    await this.ensureNullableColumns();
+    const { tipo, titulo, institucion, pais, area, descripcion, linkOficial, logo } = becaData;
 
     const [result] = await pool.execute(
-      `INSERT INTO becas (
-        tipo, titulo, institucion, pais, area, descripcion,
-        fecha_apertura, fecha_cierre, duracion, nivel_estudio,
-        idioma_requerido, edad_minima, edad_maxima, requisitos,
-        link_oficial, logo, plazas_disponibles, creado_por
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        tipo, titulo, institucion, pais, area || null, descripcion || null,
-        fechaApertura, fechaCierre, duracion || null, nivelEstudio || null,
-        idiomaRequerido || null, edadMinima || null, edadMaxima || null, requisitos || null,
-        linkOficial || null, logo || null, plazasDisponibles || null, userId
-      ]
+      `INSERT INTO becas (tipo, titulo, institucion, pais, area, descripcion, link_oficial, logo, creado_por)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [tipo, titulo, institucion, pais, area || null, descripcion || null, linkOficial || null, logo || null, userId]
     );
 
     return result.insertId;
@@ -119,26 +124,14 @@ static async findById(id) {
 
   // Actualizar beca
   static async update(id, becaData, userId) {
-    const {
-      tipo, titulo, institucion, pais, area, descripcion,
-      fechaApertura, fechaCierre, duracion, nivelEstudio,
-      idiomaRequerido, edadMinima, edadMaxima, requisitos,
-      linkOficial, logo, plazasDisponibles
-    } = becaData;
+    const { tipo, titulo, institucion, pais, area, descripcion, linkOficial, logo } = becaData;
 
     const [result] = await pool.execute(
       `UPDATE becas SET
         tipo = ?, titulo = ?, institucion = ?, pais = ?, area = ?, descripcion = ?,
-        fecha_apertura = ?, fecha_cierre = ?, duracion = ?, nivel_estudio = ?,
-        idioma_requerido = ?, edad_minima = ?, edad_maxima = ?, requisitos = ?,
-        link_oficial = ?, logo = ?, plazas_disponibles = ?, modificado_por = ?
-      WHERE id = ?`,
-      [
-        tipo, titulo, institucion, pais, area || null, descripcion || null,
-        fechaApertura, fechaCierre, duracion || null, nivelEstudio || null,
-        idiomaRequerido || null, edadMinima || null, edadMaxima || null, requisitos || null,
-        linkOficial || null, logo || null, plazasDisponibles || null, userId, id
-      ]
+        link_oficial = ?, logo = ?, modificado_por = ?
+       WHERE id = ?`,
+      [tipo, titulo, institucion, pais, area || null, descripcion || null, linkOficial || null, logo || null, userId, id]
     );
 
     return result.affectedRows > 0;
@@ -159,7 +152,7 @@ static async findById(id) {
       `SELECT 
         (SELECT COUNT(*) FROM becas WHERE activo = 1) as total_becas,
         (SELECT COUNT(*) FROM becas WHERE activo = 1 AND fecha_cierre >= CURDATE()) as becas_activas,
-        (SELECT COUNT(*) FROM usuarios WHERE role_id = 3) as total_estudiantes,
+        (SELECT IFNULL((SELECT COUNT(*) FROM premios_internacionales WHERE activo = 1), 0)) as total_estudiantes,
         (SELECT COUNT(DISTINCT pais) FROM becas WHERE activo = 1) as paises_disponibles`
     );
     return rows[0];

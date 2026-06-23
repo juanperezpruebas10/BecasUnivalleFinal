@@ -18,7 +18,7 @@ const ModernPieChart = ({ data, title, colors }) => {
       
       return (
         <div className="bg-white rounded-2xl shadow-2xl p-4 border border-gray-100 min-w-[150px]">
-          <p className="text-[#8B0D32] font-black text-xs uppercase tracking-wider mb-1">
+          <p className="text-[#967292] font-black text-xs uppercase tracking-wider mb-1">
             {payload[0].name}
           </p>
           <p className="text-2xl font-black text-gray-800">
@@ -37,7 +37,7 @@ const ModernPieChart = ({ data, title, colors }) => {
 
   return (
     <div>
-      <h3 className="text-[#8B0D32] font-black uppercase italic tracking-widest text-[11px] mb-6">
+      <h3 className="text-[#967292] font-black uppercase italic tracking-widest text-[11px] mb-6">
         {title}
       </h3>
       
@@ -81,7 +81,7 @@ const ModernPieChart = ({ data, title, colors }) => {
           <p className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">
             Total
           </p>
-          <p className="text-2xl font-black text-[#8B0D32]">
+          <p className="text-2xl font-black text-[#967292]">
             {total}
           </p>
         </div>

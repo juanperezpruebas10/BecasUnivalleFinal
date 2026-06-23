@@ -45,7 +45,7 @@ const InputField = ({
 
   return (
     <div className="flex flex-col">
-      <label className="text-[#8B0D32] text-[10px] font-black uppercase mb-2 ml-1 tracking-[0.2em]">
+      <label className="text-[#967292] text-[10px] font-black uppercase mb-2 ml-1 tracking-[0.2em]">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <div className="relative">
@@ -61,7 +61,7 @@ const InputField = ({
           onChange={handleChange}
           onBlur={handleBlur}
           placeholder={placeholder}
-          className={`w-full p-4 ${Icon ? 'pl-12' : 'pl-4'} pr-12 bg-[#fffcfc] border-2 rounded-[20px] focus:border-[#8B0D32] outline-none transition-all shadow-sm text-sm ${
+          className={`w-full p-4 ${Icon ? 'pl-12' : 'pl-4'} pr-12 bg-[#F4F4F4] border-2 rounded-[20px] focus:border-[#967292] outline-none transition-all shadow-sm text-sm ${
             isTouched && error 
               ? 'border-red-300 bg-red-50' 
               : isTouched && !error && value
@@ -73,7 +73,7 @@ const InputField = ({
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#8B0D32] transition-colors"
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#967292] transition-colors"
           >
             {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </button>
@@ -82,7 +82,7 @@ const InputField = ({
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#8B0D32] transition-colors"
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#967292] transition-colors"
           >
             {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </button>
@@ -125,17 +125,17 @@ const PhotoUpload = ({
   fileInputRef 
 }) => (
   <div className="flex flex-col">
-    <label className="text-[#8B0D32] text-[10px] font-black uppercase mb-2 ml-1 tracking-[0.2em]">
+    <label className="text-[#967292] text-[10px] font-black uppercase mb-2 ml-1 tracking-[0.2em]">
       FOTO DE PERFIL
     </label>
     
     <div
       className={`relative border-2 border-dashed rounded-2xl p-6 transition-all cursor-pointer ${
         dragActive 
-          ? 'border-[#8B0D32] bg-[#8B0D32]/5' 
+          ? 'border-[#967292] bg-[#967292]/5' 
           : formData.fotoPreview 
           ? 'border-green-300 bg-green-50'
-          : 'border-gray-200 hover:border-[#8B0D32] hover:bg-gray-50'
+          : 'border-gray-200 hover:border-[#967292] hover:bg-gray-50'
       }`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
@@ -448,7 +448,7 @@ const AgregarAuxiliar = () => {
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#fff5f5] to-white"
+        className="min-h-screen flex items-center justify-center page-surface"
       >
         <div className="text-center">
           <motion.div
@@ -471,17 +471,17 @@ const AgregarAuxiliar = () => {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="min-h-screen bg-gradient-to-br from-[#fff5f5] to-white py-10 px-4 flex justify-center items-center"
+      className="min-h-screen page-surface py-10 px-4 flex justify-center items-center"
     >
       <motion.div 
         variants={slideAnimation}
-        className="w-full max-w-4xl bg-white rounded-[45px] shadow-[0_30px_80px_rgba(139,13,50,0.15)] overflow-hidden border border-white"
+        className="w-full max-w-4xl bg-white rounded-[45px] shadow-[0_30px_80px_rgba(150,114,146,0.15)] overflow-hidden border border-white"
       >
         {/* Header */}
         <motion.div 
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="relative bg-gradient-to-r from-[#8B0D32] to-[#a30046] p-10 text-white text-center overflow-hidden"
+          className="relative bg-gradient-to-r from-[#967292] to-[#9C7A98] p-10 text-white text-center overflow-hidden"
         >
           <motion.div
             animate={{ 
@@ -588,7 +588,7 @@ const AgregarAuxiliar = () => {
 
             {/* Departamento */}
             <motion.div variants={inputVariants} className="flex flex-col">
-              <label className="text-[#8B0D32] text-[10px] font-black uppercase mb-2 ml-1 tracking-[0.2em]">
+              <label className="text-[#967292] text-[10px] font-black uppercase mb-2 ml-1 tracking-[0.2em]">
                 DEPARTAMENTO
               </label>
               <select
@@ -596,7 +596,7 @@ const AgregarAuxiliar = () => {
                 value={formData.departamento}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                className="w-full p-4 bg-[#fffcfc] border-2 border-gray-100 rounded-[20px] focus:border-[#8B0D32] outline-none transition-all shadow-sm text-sm"
+                className="w-full p-4 bg-[#F4F4F4] border-2 border-gray-100 rounded-[20px] focus:border-[#967292] outline-none transition-all shadow-sm text-sm"
               >
                 <option value="">Seleccionar departamento</option>
                 <option value="admisiones">Admisiones</option>
@@ -673,7 +673,7 @@ const AgregarAuxiliar = () => {
               onClick={() => navigate('/dashboard')}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="text-gray-400 font-bold uppercase text-[10px] tracking-widest hover:text-[#8B0D32] transition-colors"
+              className="text-gray-400 font-bold uppercase text-[10px] tracking-widest hover:text-[#967292] transition-colors"
             >
               Cancelar
             </motion.button>
@@ -682,7 +682,7 @@ const AgregarAuxiliar = () => {
               disabled={loading}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="relative bg-gradient-to-r from-[#8B0D32] to-[#a30046] text-white px-12 py-4 rounded-[25px] font-black uppercase text-[10px] tracking-[0.2em] shadow-lg hover:shadow-xl transition-all disabled:opacity-50 overflow-hidden group"
+              className="relative bg-gradient-to-r from-[#967292] to-[#9C7A98] text-white px-12 py-4 rounded-[25px] font-black uppercase text-[10px] tracking-[0.2em] shadow-lg hover:shadow-xl transition-all disabled:opacity-50 overflow-hidden group"
             >
               {loading ? (
                 <motion.div

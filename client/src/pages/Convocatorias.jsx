@@ -17,9 +17,9 @@ import {
   Eye,
   Building  // ← Asegúrate de tener Building importado
 } from 'lucide-react';
-import Header from '../components/Header';
 import becaService from '../services/becaService';
 import authService from '../services/authService';
+import { getOpportunityOptions, getOpportunityType } from '../config/opportunityTypes';
 
 
 const Convocatorias = () => {
@@ -35,14 +35,7 @@ const Convocatorias = () => {
   const itemsPerPage = 12;
 
   // Tipos de becas
-  const tipos = [
-    { value: 'beca', label: '🎓 Beca', icon: GraduationCap },
-    { value: 'curso', label: '📚 Curso', icon: BookOpen },
-    { value: 'pasantia', label: '💼 Pasantía', icon: Briefcase },
-    { value: 'intercambio', label: '🌍 Intercambio', icon: Globe },
-    { value: 'webinar', label: '🎥 Webinar', icon: Video },
-    { value: 'concurso', label: '🏆 Concurso', icon: Trophy }
-  ];
+  const tipos = getOpportunityOptions();
 
   const estados = [
     { value: 'activa', label: 'Activas' },
@@ -140,31 +133,15 @@ const handleCardClick = async (beca) => {
 };
 
   const getTipoIcon = (tipo) => {
-    const icons = {
-      beca: '🎓',
-      curso: '📚',
-      pasantia: '💼',
-      intercambio: '🌍',
-      webinar: '🎥',
-      concurso: '🏆'
-    };
-    return icons[tipo] || '📖';
+    return getOpportunityType(tipo).emoji;
   };
 
   const getTipoColor = (tipo) => {
-    const colors = {
-      beca: 'from-blue-500 to-blue-600',
-      curso: 'from-green-500 to-green-600',
-      pasantia: 'from-purple-500 to-purple-600',
-      intercambio: 'from-cyan-500 to-cyan-600',
-      webinar: 'from-orange-500 to-orange-600',
-      concurso: 'from-yellow-500 to-yellow-600'
-    };
-    return colors[tipo] || 'from-gray-500 to-gray-600';
+    return getOpportunityType(tipo).gradient;
   };
 
   const getEstadoColor = (estado) => {
-    if (estado === 'activa') return 'bg-green-100 text-green-600';
+    if (estado === 'activa') return 'bg-[#AF93AC]/30 text-[#614B59]';
     return 'bg-red-100 text-red-600';
   };
 
@@ -196,9 +173,6 @@ const handleCardClick = async (beca) => {
             {tipos.find(t => t.value === beca.tipo)?.label || beca.tipo}
           </span>
         </div>
-        <span className={`text-[8px] font-black uppercase px-2 py-1 rounded-full ${getEstadoColor(beca.estado)} bg-white/90`}>
-          {getEstadoLabel(beca.estado)}
-        </span>
       </div>
     </div>
     
@@ -208,7 +182,7 @@ const handleCardClick = async (beca) => {
       <div className="flex justify-center mb-4">
         {beca.logo ? (
           <img 
-            src={`http://localhost:5000${beca.logo}`} 
+            src={beca.logo}
             alt="logo" 
             className="w-16 h-16 rounded-xl object-contain bg-white p-2 shadow-sm"
             onError={(e) => { 
@@ -241,33 +215,14 @@ const handleCardClick = async (beca) => {
         )}
       </div>
       
-      {/* Fechas y plazas */}
-      <div className="border-t border-gray-100 pt-3 mt-2">
-        <div className="flex justify-between items-center mb-2">
-          <div className="flex items-center gap-1 text-[10px] text-gray-500">
-            <Calendar className="w-3 h-3" />
-            <span>Cierre: {new Date(beca.fecha_cierre).toLocaleDateString('es-ES')}</span>
-          </div>
-          {beca.diasRestantes > 0 && beca.estado === 'activa' && (
-            <span className="text-[9px] font-bold text-green-500">
-              {beca.diasRestantes} días
-            </span>
-          )}
-        </div>
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <span className="text-[9px] font-bold text-gray-600">
-              🎯 Plazas: {beca.plazas_disponibles || 'N/A'}
-            </span>
-            <span className="text-[9px] font-bold text-gray-400 flex items-center gap-1">
-              <Eye className="w-3 h-3" />
-              {beca.visitas || 0}
-            </span>
-          </div>
-          <span className="text-[9px] font-bold text-[#8B0D32] flex items-center gap-1">
-            Ver más <ExternalLink className="w-3 h-3" />
-          </span>
-        </div>
+      <div className="border-t border-gray-100 pt-3 mt-2 flex justify-between items-center">
+        <span className="text-[9px] font-bold text-gray-400 flex items-center gap-1">
+          <Eye className="w-3 h-3" />
+          {beca.visitas || 0}
+        </span>
+        <span className="text-[9px] font-bold text-[#967292] flex items-center gap-1">
+          Ver más <ExternalLink className="w-3 h-3" />
+        </span>
       </div>
     </div>
   </motion.div>
@@ -276,10 +231,9 @@ const handleCardClick = async (beca) => {
   if (loading) {
     return (
       <>
-        <Header />
-        <div className="min-h-screen flex items-center justify-center pt-28">
+        <div className="min-h-screen flex items-center justify-center pt-8">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#8B0D32] mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#967292] mx-auto mb-4"></div>
             <p className="text-gray-500">Cargando convocatorias...</p>
           </div>
         </div>
@@ -289,8 +243,7 @@ const handleCardClick = async (beca) => {
 
   return (
     <>
-      <Header />
-      <div className="min-h-screen bg-gradient-to-br from-[#fff5f5] to-white pt-28 pb-10 px-4">
+      <div className="min-h-screen page-surface pt-8 pb-10 px-4">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <motion.div
@@ -298,7 +251,7 @@ const handleCardClick = async (beca) => {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <h1 className="text-4xl font-black italic text-[#8B0D32] mb-2">
+            <h1 className="text-4xl font-black italic text-[#967292] mb-2">
               Convocatorias Activas
             </h1>
             <p className="text-gray-500 text-sm">
@@ -321,14 +274,14 @@ const handleCardClick = async (beca) => {
                   placeholder="Buscar por título, institución, país o área..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:border-[#8B0D32] outline-none transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:border-[#967292] outline-none transition-all"
                 />
               </div>
               
               <select
                 value={filterTipo}
                 onChange={(e) => setFilterTipo(e.target.value)}
-                className="px-4 py-3 border border-gray-200 rounded-xl focus:border-[#8B0D32] outline-none transition-all"
+                className="px-4 py-3 border border-gray-200 rounded-xl focus:border-[#967292] outline-none transition-all"
               >
                 <option value="">Todos los tipos</option>
                 {tipos.map(tipo => (
@@ -339,7 +292,7 @@ const handleCardClick = async (beca) => {
               <select
                 value={filterEstado}
                 onChange={(e) => setFilterEstado(e.target.value)}
-                className="px-4 py-3 border border-gray-200 rounded-xl focus:border-[#8B0D32] outline-none transition-all"
+                className="px-4 py-3 border border-gray-200 rounded-xl focus:border-[#967292] outline-none transition-all"
               >
                 <option value="">Todos los estados</option>
                 {estados.map(estado => (
@@ -354,7 +307,7 @@ const handleCardClick = async (beca) => {
                     setFilterTipo('');
                     setFilterEstado('');
                   }}
-                  className="px-4 py-3 text-[#8B0D32] font-bold text-xs uppercase tracking-wider hover:bg-gray-50 rounded-xl transition-all"
+                  className="px-4 py-3 text-[#967292] font-bold text-xs uppercase tracking-wider hover:bg-gray-50 rounded-xl transition-all"
                 >
                   Limpiar filtros
                 </button>
@@ -383,7 +336,7 @@ const handleCardClick = async (beca) => {
                   setFilterTipo('');
                   setFilterEstado('');
                 }}
-                className="mt-4 text-[#8B0D32] font-bold text-sm"
+                className="mt-4 text-[#967292] font-bold text-sm"
               >
                 Limpiar filtros
               </button>
