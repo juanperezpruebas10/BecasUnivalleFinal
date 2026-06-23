@@ -323,9 +323,7 @@ const Dashboard = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.7 + index * 0.1 }}
-                whileHover={{ y: -5 }}
-                className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 cursor-pointer hover:shadow-xl transition-all"
-                onClick={() => navigate(`/dashboard/convocatorias/${conv.id}`)}
+                className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 transition-all"
               >
                 <div className="flex justify-between items-start mb-4">
                   <Calendar size={24} strokeWidth={1.5} className="text-[#967292]" />
