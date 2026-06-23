@@ -169,10 +169,10 @@ static async findById(id) {
   // Obtener becas más visitadas
   static async getMasVisitadas(limit = 5) {
     const [rows] = await pool.execute(
-      `SELECT id, titulo, institucion, pais, visitas 
-       FROM becas 
-       WHERE activo = 1 
-       ORDER BY visitas DESC 
+      `SELECT id, titulo, institucion, pais, visitas, tipo, link_oficial
+       FROM becas
+       WHERE activo = 1
+       ORDER BY visitas DESC
        LIMIT ${parseInt(limit)}`
     );
     return rows;
