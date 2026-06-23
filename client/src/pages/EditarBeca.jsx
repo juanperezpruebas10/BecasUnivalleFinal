@@ -241,7 +241,7 @@ const EditarBeca = () => {
     try {
       const formDataToSend = new FormData();
       Object.keys(formData).forEach(key => {
-        if (key !== 'logoPreview' && formData[key] !== null && formData[key] !== '') {
+        if (key !== 'logoPreview' && key !== 'logoFile' && formData[key] !== null && formData[key] !== '') {
           formDataToSend.append(key, formData[key]);
         }
       });
