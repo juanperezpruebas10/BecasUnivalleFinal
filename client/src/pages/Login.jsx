@@ -104,9 +104,6 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              <p className="text-xs text-gray-400 mt-1">
-                * Los estudiantes pueden usar cualquier contraseña
-              </p>
             </div>
 
             <AnimatePresence>
