@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
+const { isStudentDomain } = require('../utils/emailValidator');
 
 // Login general
 const login = async (req, res) => {
@@ -12,9 +13,8 @@ const login = async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ message: 'Email y contraseña son requeridos' });
     }
-
-    // Verificar si es un estudiante (login automático por dominio)
-    if (email.endsWith('@est.univalle.edu')) {
+    // Verificar si es un estudiante / persona común (login automático por dominio)
+    if (isStudentDomain(email)) {
       console.log('Login como estudiante:', email);
       const user = await User.validateAndGetRoleByEmail(email);
       
@@ -83,7 +83,6 @@ const login = async (req, res) => {
     res.status(500).json({ message: 'Error en el servidor' });
   }
 };
-
 // Obtener perfil del usuario actual
 const getProfile = async (req, res) => {
   try {
@@ -103,5 +102,4 @@ const getProfile = async (req, res) => {
     res.status(500).json({ message: 'Error al obtener perfil' });
   }
 };
-
 module.exports = { login, getProfile };
