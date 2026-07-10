@@ -75,9 +75,7 @@ const Login = () => {
             <p className="text-center text-gray-500 text-sm mb-6">
               Use su correo institucional
               <br />
-              <span className="text-xs text-gray-400">
-                (docente: @docent.univalle.edu | auxiliar: @aux.univalle.edu | estudiante: @est.univalle.edu)
-              </span>
+              
             </p>
             
             <div>
