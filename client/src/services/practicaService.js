@@ -2,7 +2,7 @@ import axios from 'axios';
 import API_URL from '../config/api';
 
 const getAuthHeader = () => {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   return {
     headers: { Authorization: `Bearer ${token}` }
   };
@@ -17,10 +17,9 @@ const practicaService = {
       throw error.response?.data || { message: 'Error al obtener prácticas internacionales' };
     }
   },
-
   create: async (formData) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       const response = await axios.post(`${API_URL}/practicas-internacionales`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
