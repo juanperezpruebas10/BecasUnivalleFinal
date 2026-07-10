@@ -1,7 +1,7 @@
 import axios from 'axios';
 import API_URL from '../config/api';
 
-const getAuthHeader = () => ({ headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+const getAuthHeader = () => ({ headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` } });
 
 const premioService = {
   getAll: async () => {
@@ -9,14 +9,14 @@ const premioService = {
     return res.data;
   },
   create: async (formData) => {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     const res = await axios.post(`${API_URL}/premios-internacionales`, formData, {
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
     });
     return res.data;
   },
   update: async (id, formData) => {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     const res = await axios.put(`${API_URL}/premios-internacionales/${id}`, formData, {
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
     });
