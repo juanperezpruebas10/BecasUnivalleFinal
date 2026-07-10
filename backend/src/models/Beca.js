@@ -95,7 +95,7 @@ static async findAllForStudents() {
             CONCAT(u.nombre, ' ', u.apellido) as creador_nombre
      FROM becas b
      LEFT JOIN usuarios u ON b.creado_por = u.id
-     WHERE b.activo = 1 AND b.fecha_cierre >= CURDATE()
+     WHERE b.activo = 1
      ORDER BY b.created_at DESC`
   );
   return rows;
