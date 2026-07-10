@@ -14,12 +14,12 @@ import EditarBeca from './pages/EditarBeca';
 import PracticasInternacionales from './pages/PracticasInternacionales';
 import PremiosInternacionales from './pages/PremiosInternacionales';
 import ReportesPremios from './pages/ReportesPremios';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const isLoginPage = location.pathname === '/';
-
   return (
     <div className={`min-h-screen flex flex-col ${isLoginPage ? 'bg-white' : 'bg-[#F4F4F4]'} overflow-x-hidden`}>
       
@@ -30,7 +30,6 @@ function App() {
           showMenuButton={true} 
         />
       )}
-
       {!isLoginPage && (
         <Sidebar isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       )}
@@ -39,51 +38,77 @@ function App() {
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<Login />} />
+
             <Route path="/dashboard" element={
-              <AnimatedPage>
-                <Dashboard />
-              </AnimatedPage>
+              <ProtectedRoute>
+                <AnimatedPage>
+                  <Dashboard />
+                </AnimatedPage>
+              </ProtectedRoute>
             } />
+
+            {/* Solo Docente y Auxiliar pueden crear/editar becas */}
             <Route path="/dashboard/formulario-becas" element={
-              <AnimatedPage>
-                <RegistroBeca />
-              </AnimatedPage>
-            } />
-            <Route path="/dashboard/agregar-auxiliar" element={
-              <AnimatedPage>
-                <AgregarAuxiliar />
-              </AnimatedPage>
-            } />
-            <Route path="/dashboard/reportes" element={
-              <AnimatedPage>
-                <Reportes />
-              </AnimatedPage>
-            } />
-            <Route path="/dashboard/reportes-premios" element={
-              <AnimatedPage>
-                <ReportesPremios />
-              </AnimatedPage>
-            } />
-            {/* NUEVA RUTA PARA CONVOCATORIAS */}
-            <Route path="/dashboard/convocatorias" element={
-              <AnimatedPage>
-                <Convocatorias />
-              </AnimatedPage>
+              <ProtectedRoute allowedRoles={['docente', 'auxiliar']}>
+                <AnimatedPage>
+                  <RegistroBeca />
+                </AnimatedPage>
+              </ProtectedRoute>
             } />
             <Route path="/dashboard/editar-beca/:id" element={
-              <AnimatedPage>
-                <EditarBeca />
-              </AnimatedPage>
+              <ProtectedRoute allowedRoles={['docente', 'auxiliar']}>
+                <AnimatedPage>
+                  <EditarBeca />
+                </AnimatedPage>
+              </ProtectedRoute>
+            } />
+
+            {/* Solo Docente (admin) puede agregar auxiliares */}
+            <Route path="/dashboard/agregar-auxiliar" element={
+              <ProtectedRoute allowedRoles={['docente']}>
+                <AnimatedPage>
+                  <AgregarAuxiliar />
+                </AnimatedPage>
+              </ProtectedRoute>
+            } />
+
+            {/* Solo Docente y Auxiliar pueden ver reportes */}
+            <Route path="/dashboard/reportes" element={
+              <ProtectedRoute allowedRoles={['docente', 'auxiliar']}>
+                <AnimatedPage>
+                  <Reportes />
+                </AnimatedPage>
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/reportes-premios" element={
+              <ProtectedRoute allowedRoles={['docente', 'auxiliar']}>
+                <AnimatedPage>
+                  <ReportesPremios />
+                </AnimatedPage>
+              </ProtectedRoute>
+            } />
+
+            {/* Accesibles para cualquier usuario logeado (docente, auxiliar, estudiante) */}
+            <Route path="/dashboard/convocatorias" element={
+              <ProtectedRoute>
+                <AnimatedPage>
+                  <Convocatorias />
+                </AnimatedPage>
+              </ProtectedRoute>
             } />
             <Route path="/dashboard/practicas-internacionales" element={
-              <AnimatedPage>
-                <PracticasInternacionales />
-              </AnimatedPage>
+              <ProtectedRoute>
+                <AnimatedPage>
+                  <PracticasInternacionales />
+                </AnimatedPage>
+              </ProtectedRoute>
             } />
             <Route path="/dashboard/premios-internacionales" element={
-              <AnimatedPage>
-                <PremiosInternacionales />
-              </AnimatedPage>
+              <ProtectedRoute>
+                <AnimatedPage>
+                  <PremiosInternacionales />
+                </AnimatedPage>
+              </ProtectedRoute>
             } />
           </Routes>
         </AnimatePresence>
