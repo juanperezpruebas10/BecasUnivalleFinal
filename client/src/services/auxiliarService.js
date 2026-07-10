@@ -2,7 +2,7 @@ import axios from 'axios';
 import API_URL from '../config/api';
 
 const getAuthHeader = () => {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   return {
     headers: { Authorization: `Bearer ${token}` }
   };
@@ -18,11 +18,10 @@ const auxiliarService = {
       throw error.response?.data || { message: 'Error al obtener auxiliares' };
     }
   },
-
   // Crear auxiliar
   create: async (formData) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       const response = await axios.post(`${API_URL}/auxiliares`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -34,7 +33,6 @@ const auxiliarService = {
       throw error.response?.data || { message: 'Error al crear auxiliar' };
     }
   },
-
   // Eliminar auxiliar
   delete: async (id) => {
     try {
