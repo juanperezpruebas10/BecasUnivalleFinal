@@ -174,9 +174,6 @@ const EditarBeca = () => {
 
   const tiposOportunidad = getOpportunityOptions();
 
-  const nivelesEstudio = ['Pregrado', 'Postgrado', 'Maestría', 'Doctorado', 'Técnico', 'Todos'];
-  const idiomas = ['Español', 'Inglés', 'Portugués', 'Francés', 'Alemán', 'Chino', 'Italiano', 'No requiere'];
-
   // Cargar datos de la beca
   useEffect(() => {
     const loadBeca = async () => {
@@ -334,27 +331,6 @@ const EditarBeca = () => {
               <InputField label="ÁREA" name="area" icon={BookOpen} required={false} formData={formData} errors={errors} touched={touched} handleChange={handleChange} handleBlur={handleBlur} />
               <InputField label="DESCRIPCIÓN" name="descripcion" required={false} rows={4} formData={formData} errors={errors} touched={touched} handleChange={handleChange} handleBlur={handleBlur} />
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <InputField label="FECHA APERTURA" name="fechaApertura" type="date" icon={Calendar} formData={formData} errors={errors} touched={touched} handleChange={handleChange} handleBlur={handleBlur} />
-                <InputField label="FECHA CIERRE" name="fechaCierre" type="date" icon={Calendar} formData={formData} errors={errors} touched={touched} handleChange={handleChange} handleBlur={handleBlur} />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <InputField label="DURACIÓN" name="duracion" required={false} placeholder="Ej. 12 meses" formData={formData} errors={errors} touched={touched} handleChange={handleChange} handleBlur={handleBlur} />
-                <InputField label="PLAZAS" name="plazasDisponibles" type="number" icon={Users} required={false} formData={formData} errors={errors} touched={touched} handleChange={handleChange} handleBlur={handleBlur} />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <InputField label="NIVEL ESTUDIO" name="nivelEstudio" options={nivelesEstudio} required={false} formData={formData} errors={errors} touched={touched} handleChange={handleChange} handleBlur={handleBlur} />
-                <InputField label="IDIOMA" name="idiomaRequerido" options={idiomas} required={false} formData={formData} errors={errors} touched={touched} handleChange={handleChange} handleBlur={handleBlur} />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <InputField label="EDAD MÍNIMA" name="edadMinima" type="number" required={false} formData={formData} errors={errors} touched={touched} handleChange={handleChange} handleBlur={handleBlur} />
-                <InputField label="EDAD MÁXIMA" name="edadMaxima" type="number" required={false} formData={formData} errors={errors} touched={touched} handleChange={handleChange} handleBlur={handleBlur} />
-              </div>
-
-              <InputField label="REQUISITOS" name="requisitos" required={false} rows={3} formData={formData} errors={errors} touched={touched} handleChange={handleChange} handleBlur={handleBlur} />
               <InputField label="ENLACE OFICIAL" name="linkOficial" icon={LinkIcon} type="url" required={false} formData={formData} errors={errors} touched={touched} handleChange={handleChange} handleBlur={handleBlur} />
 
               <LogoUpload 
