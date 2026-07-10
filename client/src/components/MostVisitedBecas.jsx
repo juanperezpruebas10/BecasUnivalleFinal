@@ -94,11 +94,32 @@ const MostVisitedBecas = ({ becas: becasProp }) => {
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ scale: 1.02 }}
                 className="group cursor-pointer"
-                onClick={() => {
+                onClick={async () => {
                   // Al hacer clic en el ranking, abrir la beca si tiene enlace
-                  if (beca.link_oficial) {
-                    window.open(beca.link_oficial, '_blank');
+                  if (!beca.link_oficial) return;
+
+                  if (user?.rol === 'estudiante') {
+                    // Actualización optimista: sumamos +1 en pantalla al instante
+                    setBecas(prev =>
+                      prev.map(b =>
+                        b.id === beca.id ? { ...b, visitas: (b.visitas || 0) + 1 } : b
+                      )
+                    );
+
+                    try {
+                      await becaService.getById(beca.id);
+                    } catch (error) {
+                      console.error('Error registrando visita:', error);
+                      // Si falló, revertimos el +1 optimista
+                      setBecas(prev =>
+                        prev.map(b =>
+                          b.id === beca.id ? { ...b, visitas: Math.max((b.visitas || 1) - 1, 0) } : b
+                        )
+                      );
+                    }
                   }
+
+                  window.open(beca.link_oficial, '_blank');
                 }}
               >
                 <div className="flex items-center gap-3 mb-1">
