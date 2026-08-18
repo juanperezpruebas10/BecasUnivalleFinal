@@ -4,7 +4,6 @@ import { useInView } from 'react-intersection-observer';
 import { useNavigate } from 'react-router-dom';
 import ModernPieChart from '../components/ModernPieChart';
 import MostVisitedBecas from '../components/MostVisitedBecas';
-import PremiosCarousel from '../components/PremiosCarousel';
 import becaService from '../services/becaService';
 import authService from '../services/authService';
 import { getOpportunityType, opportunityChartColors } from '../config/opportunityTypes';
