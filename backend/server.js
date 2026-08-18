@@ -17,13 +17,11 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const authRoutes = require('./src/routes/authRoutes');
 const becaRoutes = require('./src/routes/becaRoutes');
 const auxiliarRoutes = require('./src/routes/auxiliarRoutes');
-const practicaRoutes = require('./src/routes/practicaRoutes');
 
 // Usar rutas
 app.use('/api/auth', authRoutes);
 app.use('/api/becas', becaRoutes);
 app.use('/api/auxiliares', auxiliarRoutes);
-app.use('/api/practicas-internacionales', practicaRoutes);
 
 // Ruta de prueba
 app.get('/api', (req, res) => {
