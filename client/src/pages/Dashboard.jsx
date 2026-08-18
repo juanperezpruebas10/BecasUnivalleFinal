@@ -116,7 +116,6 @@ const Dashboard = () => {
       
       setConvocatorias([
         { id: 1, titulo: "Beca Excelencia AcadÃ©mica", fecha_cierre: "2024-12-15", plazas_disponibles: 15, estado: "activa" },
-        { id: 2, titulo: "Programa Internacional", fecha_cierre: "2024-12-20", plazas_disponibles: 8, estado: "activa" },
         { id: 3, titulo: "InvestigaciÃ³n Doctoral", fecha_cierre: "2024-12-25", plazas_disponibles: 5, estado: "proxima" },
         { id: 4, titulo: "Movilidad Estudiantil", fecha_cierre: "2025-01-10", plazas_disponibles: 20, estado: "proxima" }
       ]);
