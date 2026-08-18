@@ -6,10 +6,8 @@ import {
   PlusCircle,
   UserPlus,
   FileText,
-  ImagePlus,
   LogOut,
-  X,
-  Trophy
+  X
 } from 'lucide-react';
 import authService from '../services/authService';
 
@@ -29,8 +27,6 @@ const Sidebar = ({ isOpen, onClose }) => {
       return [
         ...base,
         { name: 'Nueva Beca', icon: PlusCircle, path: '/dashboard/formulario-becas' },
-        { name: 'Premios', icon: ImagePlus, path: '/dashboard/premios-internacionales' },
-        { name: 'Rep. Premios', icon: Trophy, path: '/dashboard/reportes-premios' },
         { name: 'Auxiliar', icon: UserPlus, path: '/dashboard/agregar-auxiliar' },
         { name: 'Reportes', icon: FileText, path: '/dashboard/reportes' },
       ];
@@ -40,8 +36,6 @@ const Sidebar = ({ isOpen, onClose }) => {
       return [
         ...base,
         { name: 'Nueva Beca', icon: PlusCircle, path: '/dashboard/formulario-becas' },
-        { name: 'Premios', icon: ImagePlus, path: '/dashboard/premios-internacionales' },
-        { name: 'Rep. Premios', icon: Trophy, path: '/dashboard/reportes-premios' },
         { name: 'Reportes', icon: FileText, path: '/dashboard/reportes' },
       ];
     }
